@@ -20,7 +20,7 @@ public class HandScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 
 	public void grabHold(Rigidbody grabTarget) {
