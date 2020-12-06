@@ -71,6 +71,8 @@ public class HandController : MonoBehaviour
 		inactiveHand.moveToPoint = true;
 		inactiveHand.targetPoint = transform.position + inactiveHand.armLength * (inactiveHand.restingPoint.x * transform.right + inactiveHand.restingPoint.y * transform.up + inactiveHand.restingPoint.z * transform.forward);
 		//lastMousePos = Input.mousePosition;
+		leftHand.setVelocity(GetComponent<Rigidbody>().velocity);
+		rightHand.setVelocity(GetComponent<Rigidbody>().velocity);
 	}
 
 	void checkHandMovement(HandScript hand) {
