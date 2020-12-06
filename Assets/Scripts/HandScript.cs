@@ -4,18 +4,24 @@ using UnityEngine;
 
 public class HandScript : MonoBehaviour
 {
-    public Transform shoulder;
 	public float armLength;
 	public float handSize;
 	public Vector3 restingPoint;
 	public float side;
 
+	public bool moveToPoint;
+	public Vector3 targetPoint;
+
 	private FixedJoint holdJoint;
+
+	private bool grabbing;
+	private Vector3 grabPos;
 
 	// Start is called before the first frame update
 	void Start()
     {
-    }
+		grabbing = false;
+	}
 
     // Update is called once per frame
     void Update()
@@ -23,14 +29,28 @@ public class HandScript : MonoBehaviour
         GetComponent<Rigidbody>().velocity = Vector3.zero;
     }
 
-	public void grabHold(Rigidbody grabTarget) {
-		//holdJoint.connectedBody = grabTarget;
-		holdJoint = gameObject.AddComponent<FixedJoint>();
-		holdJoint.connectedBody = grabTarget;
-		print("Grab");
+	private void LateUpdate()
+	{
+		if (grabbing) {
+			transform.position = grabPos;
+		} else {
+			if (moveToPoint) {
+				transform.position = transform.position + (3 * Time.deltaTime) * (targetPoint - transform.position);
+			}
+		}
+	}
+
+	public bool grabHold(RaycastHit grabTarget) {
+		if (Vector3.Distance(grabTarget.point, transform.position) <= handSize) {
+			grabPos = grabTarget.point;
+			grabbing = true;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public void releaseHold() {
-		Destroy(holdJoint);
+		grabbing = false;
 	}
 }
