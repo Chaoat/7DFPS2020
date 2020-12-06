@@ -58,7 +58,10 @@ public class HandController : MonoBehaviour
 				}
 			}
 
-			if (chosenHit != -1) {
+			if (chosenHit == -1) {
+				Vector3 prospectivePoint = mainCam.ScreenPointToRay(Input.mousePosition).GetPoint(0.80f*leftHand.armLength);
+				moveHandToPoint(leftHand, correctHandFromArm(leftHand, prospectivePoint));
+			} else {
 				moveHandToPoint(leftHand, correctHandFromArm(leftHand, hits[chosenHit].point));
 
 				if (Input.GetMouseButton(0)) {
