@@ -46,12 +46,13 @@ public class HandController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+		body.angularVelocity = Vector3.zero;
 		if (grabbing) {
 			//Vector3 mouseChange = Input.mousePosition - lastMousePos;
 			Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 			moveBody(mouseChange, activeHand);
 
-			body.angularVelocity = Vector2.zero;
+			// body.angularVelocity = Vector2.zero;
 
 			transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.rotation, targetRotation));
 			//transform.position = transform.position + (3*Time.deltaTime)*(targetPosition - transform.position);
