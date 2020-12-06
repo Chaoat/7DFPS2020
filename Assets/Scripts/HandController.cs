@@ -56,10 +56,10 @@ public class HandController : MonoBehaviour
 			transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.rotation, targetRotation));
 			//transform.position = transform.position + (3*Time.deltaTime)*(targetPosition - transform.position);
 			body.velocity = 2 * (targetPosition - transform.position);
-			print(targetPosition);
 
 			if (!Input.GetMouseButton(0)) {
 				activeHand.releaseHold();
+				inactiveHand.releaseHold();
 				grabbing = false;
 			}
 		} else {
@@ -71,8 +71,8 @@ public class HandController : MonoBehaviour
 		inactiveHand.moveToPoint = true;
 		inactiveHand.targetPoint = transform.position + inactiveHand.armLength * (inactiveHand.restingPoint.x * transform.right + inactiveHand.restingPoint.y * transform.up + inactiveHand.restingPoint.z * transform.forward);
 		//lastMousePos = Input.mousePosition;
-		leftHand.setVelocity(GetComponent<Rigidbody>().velocity);
-		rightHand.setVelocity(GetComponent<Rigidbody>().velocity);
+		leftHand.setVelocity(body.velocity);
+		rightHand.setVelocity(body.velocity);
 	}
 
 	void checkHandMovement(HandScript hand) {
@@ -109,7 +109,8 @@ public class HandController : MonoBehaviour
 		}
 		else
 		{
-			hand.moveToPoint = false;
+			hand.targetPoint = ray.GetPoint(0.8f*hand.armLength);
+			hand.moveToPoint = true;
 		}
 	}
 
@@ -131,13 +132,16 @@ public class HandController : MonoBehaviour
 			}
 			Vector3 forwardVector = hand.side * Vector3.Cross(upVector, hit.normal);
 
-			print(upVector.normalized);
+			// print(upVector.normalized);
 
 			targetRotation = Quaternion.LookRotation(forwardVector, upVector);
 
 			targetPosition = hit.point + 0.7f * hit.normal - 1f*forwardVector.normalized;
 
 			//print(VectorFunctions.findVectorInDirection(new Vector3(-1, 0, 0), new Vector3(1, 0, 0)));
+		} else {
+			grabbing = false;
+			hand.releaseHold();
 		}
 	}
 }
