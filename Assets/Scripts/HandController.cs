@@ -6,6 +6,10 @@ public class HandController : MonoBehaviour
 {
     public Camera mainCam;
 	public HandScript leftHand;
+	public HandScript rightHand = null;
+
+	private HandScript activeHand;
+	private HandScript inactiveHand;
 
 	private bool grabbing = false;
 	private Rigidbody body;
@@ -20,6 +24,10 @@ public class HandController : MonoBehaviour
 		body = GetComponent<Rigidbody>();
 
 		InitJoints();
+
+		activeHand = leftHand;
+		inactiveHand = rightHand;
+
 		//lastMousePos = Input.mousePosition;
 	}
 
@@ -28,8 +36,15 @@ public class HandController : MonoBehaviour
 		leftHand.armLength = leftJoint.linearLimit.limit;
 		leftHand.shoulder = leftHand.transform.parent;
 		leftHand.handSize = 0.1f;
-		leftHand.restingPoint = new Vector3(-0.5f, 0.4f, 1f);
+		leftHand.restingPoint = new Vector3(-0.7f, 0.4f, 0.5f);
 		leftHand.side = -1;
+
+		ConfigurableJoint rightJoint = rightHand.GetComponent<ConfigurableJoint>();
+		rightHand.armLength = rightJoint.linearLimit.limit;
+		rightHand.shoulder = rightHand.transform.parent;
+		rightHand.handSize = 0.1f;
+		rightHand.restingPoint = new Vector3(+0.7f, 0.4f, 0.5f);
+		rightHand.side = 1;
 	}
 
     // Update is called once per frame
@@ -46,7 +61,11 @@ public class HandController : MonoBehaviour
 				grabbing = false;
 			}
 		} else {
+			activeHand = (Input.mousePosition.x < Screen.width/2.0f) ? leftHand : rightHand;
+			inactiveHand = (Input.mousePosition.x < Screen.width/2.0f) ? rightHand : leftHand;
+
 			RaycastHit[] hits = Physics.RaycastAll(mainCam.ScreenPointToRay(Input.mousePosition));
+			print(Input.mousePosition);
 			int chosenHit = -1;
 			for (int i = 0; i<hits.Length; i++) {
 				if (chosenHit == -1) {
@@ -58,15 +77,20 @@ public class HandController : MonoBehaviour
 				}
 			}
 
-			if (chosenHit == -1) {
-				Vector3 prospectivePoint = mainCam.ScreenPointToRay(Input.mousePosition).GetPoint(0.80f*leftHand.armLength);
-				moveHandToPoint(leftHand, correctHandFromArm(leftHand, prospectivePoint));
-			} else {
-				moveHandToPoint(leftHand, correctHandFromArm(leftHand, hits[chosenHit].point));
+			if (activeHand) {
+				if (chosenHit == -1) {
+					Vector3 prospectivePoint = mainCam.ScreenPointToRay(Input.mousePosition).GetPoint(0.80f*activeHand.armLength);
+					moveHandToPoint(activeHand, correctHandFromArm(activeHand, prospectivePoint));
+				} else {
+					moveHandToPoint(activeHand, correctHandFromArm(activeHand, hits[chosenHit].point));
 
-				if (Input.GetMouseButton(0)) {
-					checkGrab(leftHand, hits[chosenHit]);
+					if (Input.GetMouseButton(0)) {
+						checkGrab(activeHand, hits[chosenHit]);
+					}
 				}
+			}
+			if (inactiveHand) {
+				moveHandToPoint(inactiveHand, correctHandFromArm(inactiveHand, inactiveHand.armLength*(inactiveHand.restingPoint.x*transform.right + inactiveHand.restingPoint.y*transform.up + inactiveHand.restingPoint.z*transform.forward)));
 			}
 		}
 		//lastMousePos = Input.mousePosition;
