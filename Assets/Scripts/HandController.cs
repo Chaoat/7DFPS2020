@@ -95,7 +95,7 @@ public class HandController : MonoBehaviour
 		if (chosenHit != -1)
 		{
 			hand.targetPoint = hits[chosenHit].point;
-			if ((hand.targetPoint - hand.transform.position).magnitude > hand.armLength) {
+			if ((hand.targetPoint - transform.position).magnitude > hand.armLength) {
 				hand.targetPoint = ray.GetPoint(hand.armLength);
 			}
 			hand.moveToPoint = true;
