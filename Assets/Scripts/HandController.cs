@@ -49,8 +49,8 @@ public class HandController : MonoBehaviour
 		body.angularVelocity = Vector3.zero;
 
 		if (Input.GetMouseButton(1)) {
-			targetRotation = Quaternion.Euler(100*Input.GetAxis("Mouse Y"), -100*Input.GetAxis("Mouse X"), 0);
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation*transform.rotation, 3*Time.deltaTime*Quaternion.Angle(transform.rotation, targetRotation));
+			targetRotation = transform.localRotation*Quaternion.Euler(-(Input.mousePosition.y - Screen.height/2.0f)/5.0f, 0.5f*(Input.mousePosition.x - Screen.width/2.0f)/5.0f, 0);
+			transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.localRotation, targetRotation));
 		} else {
 			if (grabbing) {
 				//Vector3 mouseChange = Input.mousePosition - lastMousePos;
