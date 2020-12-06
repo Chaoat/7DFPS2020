@@ -7,7 +7,7 @@ public static class VectorFunctions
 	public static Vector3 parallelVectorToNormal(Vector3 vector, Vector3 normal) {
 		Vector3 vectorInNormal = findVectorInDirection(vector, normal);
 
-		Debug.Log(vectorInNormal);
+		//Debug.Log(vectorInNormal);
 
 		if (vectorInNormal.magnitude == 0) {
 			return vector;
@@ -15,7 +15,7 @@ public static class VectorFunctions
 			return Vector3.zero;
 		} else {
 			Vector3 hypotVector = vector/vectorInNormal.magnitude;
-			Debug.Log("hypotenuse: " + hypotVector);
+			//Debug.Log("hypotenuse: " + hypotVector);
 
 			if (Vector3.Angle(normal, hypotVector) > 90) {
 				return normal + hypotVector;
