@@ -123,21 +123,6 @@ public class HandController : MonoBehaviour
 			grabbing = true;
 			hand.grabHold(hit);
 
-			//body.MoveRotation(Quaternion.LookRotation(-hit.normal));
-			//restingPosition = hit.point - hand.restingPoint;
-			//body.MovePosition(restingPosition);
-
-			//Vector3 vectorInLine = hit.normal*Vector3.Dot(hit.normal, transform.up);
-			//Vector3 upVector = transform.up - vectorInLine + calculateHandSideVector(hand);
-
-			//if (upVector == Vector3.zero) {
-			//	upVector = calculateHandSideVector(hand);
-			//}
-
-			//body.MoveRotation(Quaternion.LookRotation(transform.forward, upVector));
-			//transform.rotation = Quaternion.LookRotation(transform.forward, upVector);
-			//print(upVector);
-
 			Vector3 upVector = VectorFunctions.parallelVectorToNormal(transform.up, hit.normal);
 			if (upVector == Vector3.zero) {
 				print("shit");

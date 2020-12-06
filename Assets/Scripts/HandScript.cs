@@ -17,10 +17,14 @@ public class HandScript : MonoBehaviour
 	private bool grabbing;
 	private Vector3 grabPos;
 
+	private Rigidbody body;
+
 	// Start is called before the first frame update
 	void Start()
     {
 		grabbing = false;
+
+		body = GetComponent<Rigidbody>();
 	}
 
     // Update is called once per frame
@@ -42,7 +46,7 @@ public class HandScript : MonoBehaviour
 
 	public bool grabHold(RaycastHit grabTarget) {
 		if (Vector3.Distance(grabTarget.point, transform.position) <= handSize) {
-			grabPos = grabTarget.point;
+			grabPos = grabTarget.point + grabTarget.normal*handSize;
 			grabbing = true;
 			return true;
 		} else {
