@@ -6,6 +6,10 @@ public class HandController : MonoBehaviour
 {
     public Camera mainCam;
 	public HandScript leftHand;
+	public HandScript rightHand;
+
+	private HandScript activeHand;
+	private HandScript inactiveHand;
 
 	private bool grabbing = false;
 	private Rigidbody body;
@@ -20,19 +24,31 @@ public class HandController : MonoBehaviour
 		body = GetComponent<Rigidbody>();
 
 		InitJoints();
+
+		activeHand = leftHand;
+		inactiveHand = rightHand;
+
 		//lastMousePos = Input.mousePosition;
 	}
 
 	void InitJoints() {
 		leftHand.armLength = 2f;
 		leftHand.handSize = 0.1f;
-		leftHand.restingPoint = new Vector3(-0.5f, 0.4f, 1f);
+		leftHand.restingPoint = new Vector3(-0.3f, -0.2f, 0.5f);
 		leftHand.side = -1;
+
+		rightHand.armLength = 2f;
+		rightHand.handSize = 0.1f;
+		rightHand.restingPoint = new Vector3(+0.3f, -0.2f, 0.5f);
+		rightHand.side = 1;
 	}
 
     // Update is called once per frame
     void Update()
     {
+		activeHand = (Input.mousePosition.x < Screen.width / 2.0f) ? leftHand : rightHand;
+		inactiveHand = (Input.mousePosition.x < Screen.width / 2.0f) ? rightHand : leftHand;
+
 		if (grabbing) {
 			//Vector3 mouseChange = Input.mousePosition - lastMousePos;
 			Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
@@ -50,8 +66,11 @@ public class HandController : MonoBehaviour
 				grabbing = false;
 			}
 		} else {
-			checkHandMovement(leftHand);
+			checkHandMovement(activeHand);
 		}
+
+		inactiveHand.moveToPoint = true;
+		inactiveHand.targetPoint = transform.position + inactiveHand.armLength * (inactiveHand.restingPoint.x * transform.right + inactiveHand.restingPoint.y * transform.up + inactiveHand.restingPoint.z * transform.forward);
 		//lastMousePos = Input.mousePosition;
 	}
 
