@@ -49,7 +49,7 @@ public class HandController : MonoBehaviour
 		if (grabbing) {
 			//Vector3 mouseChange = Input.mousePosition - lastMousePos;
 			Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-			moveBody(mouseChange);
+			moveBody(mouseChange, activeHand);
 
 			body.angularVelocity = Vector2.zero;
 
@@ -114,10 +114,14 @@ public class HandController : MonoBehaviour
 		}
 	}
 
-	void moveBody(Vector3 mouseChange) {
+	void moveBody(Vector3 mouseChange, HandScript handAnchor) {
 		Vector3 change = 0.1f * (mouseChange[1] * -transform.forward + mouseChange[0] * -transform.right);
 
-		targetPosition = targetPosition + change;
+		Vector3 newPosition = targetPosition + change;
+
+		if ((newPosition - handAnchor.transform.position).magnitude <= handAnchor.armLength) {
+			targetPosition = newPosition;
+		}
 	}
 
 	void checkGrab(HandScript hand, RaycastHit hit) {
