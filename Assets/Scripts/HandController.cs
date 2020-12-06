@@ -46,9 +46,6 @@ public class HandController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		activeHand = (Input.mousePosition.x < Screen.width / 2.0f) ? leftHand : rightHand;
-		inactiveHand = (Input.mousePosition.x < Screen.width / 2.0f) ? rightHand : leftHand;
-
 		if (grabbing) {
 			//Vector3 mouseChange = Input.mousePosition - lastMousePos;
 			Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
@@ -62,10 +59,12 @@ public class HandController : MonoBehaviour
 			print(targetPosition);
 
 			if (!Input.GetMouseButton(0)) {
-				leftHand.releaseHold();
+				activeHand.releaseHold();
 				grabbing = false;
 			}
 		} else {
+			activeHand = (Input.mousePosition.x < Screen.width / 2.0f) ? leftHand : rightHand;
+			inactiveHand = (Input.mousePosition.x < Screen.width / 2.0f) ? rightHand : leftHand;
 			checkHandMovement(activeHand);
 		}
 
