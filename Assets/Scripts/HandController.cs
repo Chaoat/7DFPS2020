@@ -139,16 +139,20 @@ public class HandController : MonoBehaviour
 
 			Vector3 upVector = VectorFunctions.parallelVectorToNormal(transform.up, hit.normal);
 			if (upVector == Vector3.zero) {
-				print("shit");
 				upVector = -hand.side * Vector3.Cross(transform.forward, hit.normal);
+				print("altered");
 			}
 			Vector3 forwardVector = hand.side * Vector3.Cross(upVector, hit.normal);
+
+			//print("normal: " + hit.normal);
+			//print("upVector: " + upVector);
 
 			// print(upVector.normalized);
 
 			targetRotation = Quaternion.LookRotation(forwardVector, upVector);
 
-			targetPosition = hit.point + 0.7f * hit.normal - 1f*forwardVector.normalized;
+			//targetPosition = hit.point + 0.7f * hit.normal - 1f*forwardVector.normalized;
+			targetPosition = hit.point - hand.restingPoint.x * hit.normal - hand.restingPoint.y * upVector.normalized - hand.restingPoint.z * forwardVector.normalized;
 
 			//print(VectorFunctions.findVectorInDirection(new Vector3(-1, 0, 0), new Vector3(1, 0, 0)));
 		} else {

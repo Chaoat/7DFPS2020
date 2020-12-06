@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class VectorFunctions 
+public static class VectorFunctions
 {
 	public static Vector3 parallelVectorToNormal(Vector3 vector, Vector3 normal) {
 		Vector3 vectorInNormal = findVectorInDirection(vector, normal);
+
+		Debug.Log(vectorInNormal);
 
 		if (vectorInNormal.magnitude == 0) {
 			return vector;
@@ -13,10 +15,10 @@ public static class VectorFunctions
 			return Vector3.zero;
 		} else {
 			Vector3 hypotVector = vector/vectorInNormal.magnitude;
+			Debug.Log("hypotenuse: " + hypotVector);
 
-			Vector3 straightAdd = normal + hypotVector;
-			if (straightAdd.magnitude == 1) {
-				return straightAdd;
+			if (Vector3.Angle(normal, hypotVector) > 90) {
+				return normal + hypotVector;
 			} else {
 				return hypotVector - normal;
 			}

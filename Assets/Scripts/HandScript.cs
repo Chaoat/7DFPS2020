@@ -17,14 +17,14 @@ public class HandScript : MonoBehaviour
 	private bool grabbing;
 	private Vector3 grabPos;
 
-	private Rigidbody body;
+	//private Rigidbody body;
 
 	// Start is called before the first frame update
 	void Start()
     {
 		grabbing = false;
 
-		body = GetComponent<Rigidbody>();
+		//body = GetComponent<Rigidbody>();
 	}
 
     // Update is called once per frame
@@ -39,7 +39,7 @@ public class HandScript : MonoBehaviour
 			transform.position = grabPos;
 		} else {
 			if (moveToPoint) {
-				transform.position = transform.position + (3 * Time.deltaTime) * (targetPoint - transform.position);
+				transform.position = transform.position + (6 * Time.deltaTime) * (targetPoint - transform.position);
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class HandScript : MonoBehaviour
 		grabbing = false;
 	}
 
-	public void setVelocity(Vector3 velocity) {
-		GetComponent<Rigidbody>().velocity = velocity;
-	}
+	//public void setVelocity(Vector3 velocity) {
+	//	GetComponent<Rigidbody>().velocity = velocity;
+	//}
 }
