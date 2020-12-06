@@ -47,33 +47,40 @@ public class HandController : MonoBehaviour
     void Update()
     {
 		body.angularVelocity = Vector3.zero;
-		if (grabbing) {
-			//Vector3 mouseChange = Input.mousePosition - lastMousePos;
-			Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-			moveBody(mouseChange, activeHand);
 
-			// body.angularVelocity = Vector2.zero;
-
-			transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.rotation, targetRotation));
-			//transform.position = transform.position + (3*Time.deltaTime)*(targetPosition - transform.position);
-			body.velocity = 2 * (targetPosition - transform.position);
-
-			if (!Input.GetMouseButton(0)) {
-				activeHand.releaseHold();
-				inactiveHand.releaseHold();
-				grabbing = false;
-			}
+		if (Input.GetMouseButton(1)) {
+			targetRotation = Quaternion.Euler(100*Input.GetAxis("Mouse Y"), -100*Input.GetAxis("Mouse X"), 0);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation*transform.rotation, 3*Time.deltaTime*Quaternion.Angle(transform.rotation, targetRotation));
 		} else {
-			activeHand = (Input.mousePosition.x < Screen.width / 2.0f) ? leftHand : rightHand;
-			inactiveHand = (Input.mousePosition.x < Screen.width / 2.0f) ? rightHand : leftHand;
-			checkHandMovement(activeHand);
-		}
+			if (grabbing) {
+				//Vector3 mouseChange = Input.mousePosition - lastMousePos;
+				Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+				moveBody(mouseChange, activeHand);
 
-		inactiveHand.moveToPoint = true;
-		inactiveHand.targetPoint = transform.position + inactiveHand.armLength * (inactiveHand.restingPoint.x * transform.right + inactiveHand.restingPoint.y * transform.up + inactiveHand.restingPoint.z * transform.forward);
-		//lastMousePos = Input.mousePosition;
-		leftHand.setVelocity(body.velocity);
-		rightHand.setVelocity(body.velocity);
+				// body.angularVelocity = Vector2.zero;
+
+				transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.rotation, targetRotation));
+
+				//transform.position = transform.position + (3*Time.deltaTime)*(targetPosition - transform.position);
+				body.velocity = 2 * (targetPosition - transform.position);
+
+				if (!Input.GetMouseButton(0)) {
+					activeHand.releaseHold();
+					inactiveHand.releaseHold();
+					grabbing = false;
+				}
+			} else {
+				activeHand = (Input.mousePosition.x < Screen.width / 2.0f) ? leftHand : rightHand;
+				inactiveHand = (Input.mousePosition.x < Screen.width / 2.0f) ? rightHand : leftHand;
+				checkHandMovement(activeHand);
+			}
+
+			inactiveHand.moveToPoint = true;
+			inactiveHand.targetPoint = transform.position + inactiveHand.armLength * (inactiveHand.restingPoint.x * transform.right + inactiveHand.restingPoint.y * transform.up + inactiveHand.restingPoint.z * transform.forward);
+			//lastMousePos = Input.mousePosition;
+			leftHand.setVelocity(body.velocity);
+			rightHand.setVelocity(body.velocity);
+		}
 	}
 
 	void checkHandMovement(HandScript hand) {
