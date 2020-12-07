@@ -44,14 +44,9 @@ public class HandScript : MonoBehaviour
 		}
 	}
 
-	public bool grabHold(RaycastHit grabTarget) {
-		if (Vector3.Distance(grabTarget.point, transform.position) <= handSize) {
-			grabPos = grabTarget.point + grabTarget.normal*handSize;
-			grabbing = true;
-			return true;
-		} else {
-			return false;
-		}
+	public void grabHold(RaycastHit grabTarget) {
+		grabPos = grabTarget.point + grabTarget.normal*handSize;
+		grabbing = true;
 	}
 
 	public void releaseHold() {

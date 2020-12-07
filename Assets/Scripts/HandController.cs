@@ -12,6 +12,7 @@ public class HandController : MonoBehaviour
 	private HandScript inactiveHand;
 
 	private bool grabbing = false;
+	private bool freelooking = false;
 	private Rigidbody body;
 
 	private Quaternion targetRotation;
@@ -32,13 +33,16 @@ public class HandController : MonoBehaviour
 	}
 
 	void InitJoints() {
-		leftHand.armLength = 2f;
-		leftHand.handSize = 0.1f;
+		float armLength = 1f;
+		float handSize = 0.05f;
+		
+		leftHand.armLength = armLength;
+		leftHand.handSize = handSize;
 		leftHand.restingPoint = new Vector3(-0.3f, -0.2f, 0.5f);
 		leftHand.side = -1;
 
-		rightHand.armLength = 2f;
-		rightHand.handSize = 0.1f;
+		rightHand.armLength = armLength;
+		rightHand.handSize = handSize;
 		rightHand.restingPoint = new Vector3(+0.3f, -0.2f, 0.5f);
 		rightHand.side = 1;
 	}
@@ -48,39 +52,46 @@ public class HandController : MonoBehaviour
     {
 		body.angularVelocity = Vector3.zero;
 
-		if (Input.GetMouseButton(1)) {
-			targetRotation = transform.localRotation*Quaternion.Euler(-(Input.mousePosition.y - Screen.height/2.0f)/5.0f, 0.5f*(Input.mousePosition.x - Screen.width/2.0f)/5.0f, 0);
-			transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.localRotation, targetRotation));
+		Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+
+		if (Input.GetMouseButton(1))
+		{
+			//targetRotation = transform.localRotation*Quaternion.Euler(-(Input.mousePosition.y - Screen.height/2.0f)/5.0f, 0.5f*(Input.mousePosition.x - Screen.width/2.0f)/5.0f, 0);
+			//transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.localRotation, targetRotation));
+			transform.localRotation = transform.localRotation * Quaternion.Euler(-12 * mouseChange.y, 12 * mouseChange.x, 0);
+			freelooking = true;
 		} else {
-			if (grabbing) {
-				//Vector3 mouseChange = Input.mousePosition - lastMousePos;
-				Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
+			freelooking = false;
+		}
+
+		if (grabbing) {
+			//Vector3 mouseChange = Input.mousePosition - lastMousePos;
+			// body.angularVelocity = Vector2.zero;
+
+			if (!freelooking) {
 				moveBody(mouseChange, activeHand);
-
-				// body.angularVelocity = Vector2.zero;
-
 				transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.rotation, targetRotation));
-
-				//transform.position = transform.position + (3*Time.deltaTime)*(targetPosition - transform.position);
-				body.velocity = 2 * (targetPosition - transform.position);
-
-				if (!Input.GetMouseButton(0)) {
-					activeHand.releaseHold();
-					inactiveHand.releaseHold();
-					grabbing = false;
-				}
-			} else {
-				activeHand = (Input.mousePosition.x < Screen.width / 2.0f) ? leftHand : rightHand;
-				inactiveHand = (Input.mousePosition.x < Screen.width / 2.0f) ? rightHand : leftHand;
-				checkHandMovement(activeHand);
 			}
 
-			inactiveHand.moveToPoint = true;
-			inactiveHand.targetPoint = transform.position + inactiveHand.armLength * (inactiveHand.restingPoint.x * transform.right + inactiveHand.restingPoint.y * transform.up + inactiveHand.restingPoint.z * transform.forward);
-			//lastMousePos = Input.mousePosition;
-			//leftHand.setVelocity(body.velocity);
-			//rightHand.setVelocity(body.velocity);
+			//transform.position = transform.position + (3*Time.deltaTime)*(targetPosition - transform.position);
+			body.velocity = 2 * (targetPosition - transform.position);
+
+			if (!Input.GetMouseButton(0)) {
+				activeHand.releaseHold();
+				inactiveHand.releaseHold();
+				grabbing = false;
+			}
+		} else {
+			activeHand = (Input.mousePosition.x < Screen.width / 2.0f) ? leftHand : rightHand;
+			inactiveHand = (Input.mousePosition.x < Screen.width / 2.0f) ? rightHand : leftHand;
+			checkHandMovement(activeHand);
 		}
+
+		inactiveHand.moveToPoint = true;
+		inactiveHand.targetPoint = transform.position + inactiveHand.armLength * (inactiveHand.restingPoint.x * transform.right + inactiveHand.restingPoint.y * transform.up + inactiveHand.restingPoint.z * transform.forward);
+		//lastMousePos = Input.mousePosition;
+		//leftHand.setVelocity(body.velocity);
+		//rightHand.setVelocity(body.velocity);
 	}
 
 	void checkHandMovement(HandScript hand) {
@@ -105,7 +116,7 @@ public class HandController : MonoBehaviour
 		if (chosenHit != -1)
 		{
 			hand.targetPoint = hits[chosenHit].point;
-			if ((hand.targetPoint - transform.position).magnitude > hand.armLength) {
+			if (hits[chosenHit].distance > hand.armLength) {
 				hand.targetPoint = ray.GetPoint(hand.armLength);
 			}
 			hand.moveToPoint = true;
@@ -133,7 +144,7 @@ public class HandController : MonoBehaviour
 	}
 
 	void checkGrab(HandScript hand, RaycastHit hit) {
-		if (Vector3.Distance(hit.point, hand.transform.position) < hand.handSize) {
+		if (hit.distance < hand.armLength) {
 			grabbing = true;
 			hand.grabHold(hit);
 
