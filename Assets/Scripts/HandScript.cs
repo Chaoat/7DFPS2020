@@ -16,6 +16,7 @@ public class HandScript : MonoBehaviour
 
 	private bool grabbing;
 	private Vector3 grabPos;
+	private Vector3 rayHit;
 
 	//private Rigidbody body;
 
@@ -30,8 +31,16 @@ public class HandScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // GetComponent<Rigidbody>().velocity = Vector3.zero;
-    }
+		// GetComponent<Rigidbody>().velocity = Vector3.zero;
+
+		if (grabbing) {
+			Quaternion targetRotation = Quaternion.LookRotation(rayHit - transform.position, transform.parent.forward);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 3 * Time.deltaTime * Quaternion.Angle(transform.rotation, targetRotation));
+		} else {
+			Quaternion targetRotation = Quaternion.LookRotation(transform.parent.forward, transform.parent.up);
+			transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, 3 * Time.deltaTime * Quaternion.Angle(transform.rotation, targetRotation));
+		}
+	}
 
 	private void LateUpdate()
 	{
@@ -45,6 +54,7 @@ public class HandScript : MonoBehaviour
 	}
 
 	public void grabHold(RaycastHit grabTarget) {
+		rayHit = grabTarget.point;
 		grabPos = grabTarget.point + grabTarget.normal*handSize;
 		grabbing = true;
 	}
