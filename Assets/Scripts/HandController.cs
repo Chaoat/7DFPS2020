@@ -88,8 +88,14 @@ public class HandController : MonoBehaviour
 				grabbing = false;
 			}
 		} else {
-			activeHand = (Input.mousePosition.x < Screen.width / 2.0f) ? leftHand : rightHand;
-			inactiveHand = (Input.mousePosition.x < Screen.width / 2.0f) ? rightHand : leftHand;
+			if (Input.mousePosition.x < 0.35*Screen.width) {
+				activeHand = leftHand;
+				inactiveHand = rightHand;
+			} else if (Input.mousePosition.x > 0.65*Screen.width) {
+				activeHand = rightHand;
+				inactiveHand = leftHand;
+			}
+			
 			checkHandMovement(activeHand);
 		}
 
