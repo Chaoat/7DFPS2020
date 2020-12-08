@@ -6103,6 +6103,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6755983895614086121, guid: ed8853e1abe7e394dbc5f360aba92502, type: 3}
+      propertyPath: nextScene
+      value: Alex Scene
+      objectReference: {fileID: 0}
     - target: {fileID: 7589266524717024916, guid: ed8853e1abe7e394dbc5f360aba92502, type: 3}
       propertyPath: m_Name
       value: EndArea
