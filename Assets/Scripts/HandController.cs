@@ -14,6 +14,7 @@ public class HandController : MonoBehaviour
 	private bool grabbing = false;
 	private bool freelooking = false;
 	private Rigidbody body;
+	private bool lockMouse = false;
 
 	private Quaternion targetRotation;
 	private Vector3 targetPosition;
@@ -54,12 +55,15 @@ public class HandController : MonoBehaviour
 
 		Vector2 mouseChange = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
 
+		lockMouse = false;
+
 		if (Input.GetMouseButton(1))
 		{
 			//targetRotation = transform.localRotation*Quaternion.Euler(-(Input.mousePosition.y - Screen.height/2.0f)/5.0f, 0.5f*(Input.mousePosition.x - Screen.width/2.0f)/5.0f, 0);
 			//transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRotation, 3*Time.deltaTime*Quaternion.Angle(transform.localRotation, targetRotation));
 			transform.localRotation = transform.localRotation * Quaternion.Euler(-12 * mouseChange.y, 12 * mouseChange.x, 0);
 			freelooking = true;
+			lockMouse = true;
 		} else {
 			freelooking = false;
 		}
@@ -75,6 +79,8 @@ public class HandController : MonoBehaviour
 
 			//transform.position = transform.position + (3*Time.deltaTime)*(targetPosition - transform.position);
 			body.velocity = 2 * (targetPosition - transform.position);
+
+			lockMouse = true;
 
 			if (!Input.GetMouseButton(0)) {
 				activeHand.releaseHold();
@@ -92,6 +98,10 @@ public class HandController : MonoBehaviour
 		//lastMousePos = Input.mousePosition;
 		//leftHand.setVelocity(body.velocity);
 		//rightHand.setVelocity(body.velocity);
+
+		if (lockMouse) {
+			
+		}
 	}
 
 	void checkHandMovement(HandScript hand) {
