@@ -31,7 +31,6 @@ public class LevelEndScript : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
-		Scene oldScene = SceneManager.GetActiveScene();
 		int nextSceneI = SceneManager.sceneCount;
 		SceneManager.LoadScene(nextSceneI, LoadSceneMode.Additive);
 

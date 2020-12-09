@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class playerController : MonoBehaviour
 {
@@ -12,15 +13,19 @@ public class playerController : MonoBehaviour
 
 	public RectTransform tankLeft;
 	public Image fadeImage;
+	public Text spashText;
 
 	private AudioSource breathingSound;
 	private bool breathing = false;
 
 	public AudioClip bumpClip;
 
-	private float alpha;
+	private float alpha = 1;
+	public float alphaChange = 0;
 
 	private Rigidbody body;
+
+	private bool won = false;
 
 	// Start is called before the first frame update
     void Start()
@@ -36,15 +41,17 @@ public class playerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        oxygenLeft = oxygenLeft - Time.deltaTime;
+		if (!won) {
+			oxygenLeft = oxygenLeft - Time.deltaTime;
+		}
 
-		tankLeft.localScale = new Vector2(1, oxygenLeft/oxygenMax);
+		tankLeft.localScale = new Vector3(1, oxygenLeft/oxygenMax, 1);
 
 		if (Input.GetKeyDown("r")) {
 			restart();
 		};
 
-		alpha = Mathf.Max(alpha - Time.deltaTime, 0);
+		alpha = alpha + alphaChange*Time.deltaTime;
 
 		if (oxygenLeft < 30)
 		{
@@ -53,33 +60,58 @@ public class playerController : MonoBehaviour
 			if (oxygenLeft <= 0) {
 				restart();
 			}
+
+			spashText.text = "";
 		}
 
-		if (alpha > 0) {
-			fadeImage.color = new Color(0, 0, 0, Mathf.Min(alpha, 1));
-		}
+		//if (alpha >= 0) {
+			fadeImage.color = new Color(0, 0, 0, Mathf.Max(Mathf.Min(alpha, 1), 0));
+			spashText.color = new Color(0.9f, 0.9f, 0.9f, Mathf.Max(Mathf.Min(alpha, 1), 0));
+		//}
 
 		if (!breathing && alpha <= 0) {
 			breathing = true;
 			breathingSound.Play();
 		}
+
+		if (Input.GetMouseButtonDown(0)) {
+			alphaChange = -1;
+		}
+
+		if (SceneManager.sceneCount == 4 && !won) {
+			winGame();
+		}
 	}
 
 	private void restart() {
-		transform.position = Vector3.zero;
-		body.velocity = Vector3.zero;
-		transform.rotation = Quaternion.identity;
-		oxygenLeft = oxygenMax;
+		if (!won) {
+			transform.position = Vector3.zero;
+			body.velocity = Vector3.zero;
+			transform.rotation = Quaternion.identity;
+			oxygenLeft = oxygenMax;
 
-		alpha = 2;
+			alpha = 2;
 
-		breathingSound.Pause();
-		breathing = false;
+			breathingSound.Pause();
+			breathing = false;
+
+			spashText.text = "";
+		}
 	}
 
 	private void OnCollisionEnter(Collision hit)
 	{
-		print(hit.impulse.magnitude);
+		//print(hit.impulse.magnitude);
 		breathingSound.PlayOneShot(bumpClip, hit.impulse.magnitude/2);
+	}
+
+	private void winGame() {
+		won = true;
+		alphaChange = 1;
+		alpha = -2;
+
+		spashText.text = "You've made it to the escape pods.\n\nWithin days you'll be back down earthside, and swapping tales with your old station mates of how you managed to escape.\n\n\n" +
+		"It only took you " + Time.time + " seconds to escape\n\n\n" +
+		"Made for 7 day FPS 2020.";
 	}
 }
