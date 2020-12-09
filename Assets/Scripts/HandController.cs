@@ -19,11 +19,17 @@ public class HandController : MonoBehaviour
 	private Quaternion targetRotation;
 	private Vector3 targetPosition;
 
+	public AudioClip grabClip;
+	public AudioClip releaseClip;
+
+	private AudioSource aSource;
+
 	//private Vector3 lastMousePos;
 	// Start is called before the first frame update
 	void Start()
     {
 		body = GetComponent<Rigidbody>();
+		aSource = GetComponent<AudioSource>();
 
 		InitJoints();
 
@@ -86,12 +92,14 @@ public class HandController : MonoBehaviour
 				activeHand.releaseHold();
 				inactiveHand.releaseHold();
 				grabbing = false;
+
+				aSource.PlayOneShot(releaseClip);
 			}
 		} else {
-			if (Input.mousePosition.x < 0.35*Screen.width) {
+			if (Input.mousePosition.x < 0.45*Screen.width) {
 				activeHand = leftHand;
 				inactiveHand = rightHand;
-			} else if (Input.mousePosition.x > 0.65*Screen.width) {
+			} else if (Input.mousePosition.x > 0.55*Screen.width) {
 				activeHand = rightHand;
 				inactiveHand = leftHand;
 			}
@@ -104,10 +112,6 @@ public class HandController : MonoBehaviour
 		//lastMousePos = Input.mousePosition;
 		//leftHand.setVelocity(body.velocity);
 		//rightHand.setVelocity(body.velocity);
-
-		if (lockMouse) {
-			
-		}
 	}
 
 	void checkHandMovement(HandScript hand) {
@@ -163,6 +167,8 @@ public class HandController : MonoBehaviour
 
 	void checkGrab(HandScript hand, RaycastHit hit) {
 		if (hit.distance < hand.armLength) {
+			aSource.PlayOneShot(grabClip);
+
 			grabbing = true;
 			hand.grabHold(hit);
 

@@ -337,6 +337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nextScene: 
+  trash: {fileID: 0}
 --- !u!1 &9163751643028470040
 GameObject:
   m_ObjectHideFlags: 0

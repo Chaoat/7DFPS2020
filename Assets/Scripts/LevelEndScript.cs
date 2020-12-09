@@ -7,20 +7,47 @@ public class LevelEndScript : MonoBehaviour
 {
     public string nextScene;
 
-	private Collider collider;
+	public GameObject trash;
+
 	private void Start()
 	{
-		collider = GetComponent<BoxCollider>();
 	}
+
+	private bool deletingSceneWaiting = false;
+	private int sceneToBeDeleted;
 
 	private void Update()
 	{
-		
+		//print(SceneManager.sceneCount);
+		//if (deletingSceneWaiting) {
+		//	if (SceneManager.sceneCount > 1) {
+		//		deletingSceneWaiting = false;
+		//		SceneManager.UnloadScene(sceneToBeDeleted);
+		//
+		//		
+		//	}
+		//}
 	}
 
 	private void OnTriggerEnter(Collider other)
 	{
-		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1, LoadSceneMode.Single);
+		Scene oldScene = SceneManager.GetActiveScene();
+		int nextSceneI = SceneManager.sceneCount;
+		SceneManager.LoadScene(nextSceneI, LoadSceneMode.Additive);
+
+		Scene nextScene = SceneManager.GetSceneByBuildIndex(nextSceneI);
+
+		//SceneManager.MoveGameObjectToScene(player, nextScene);
+		//SceneManager.MoveGameObjectToScene(interfaceObject, nextScene);
+
+		playerController.currentPlayer.transform.position = playerController.currentPlayer.transform.position - transform.position;
+
+		playerController.currentPlayer.oxygenLeft = playerController.currentPlayer.oxygenMax;
+
+		Destroy(trash);
+
+		//deletingSceneWaiting = true;
+		//sceneToBeDeleted = oldScene.buildIndex;
 	}
 
 	//private void OnTrigger(Collider other)
