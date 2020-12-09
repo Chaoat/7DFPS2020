@@ -41,6 +41,7 @@ public class LevelEndScript : MonoBehaviour
 		//SceneManager.MoveGameObjectToScene(interfaceObject, nextScene);
 
 		playerController.currentPlayer.transform.position = playerController.currentPlayer.transform.position - transform.position;
+		//playerController.currentPlayer.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
 		playerController.currentPlayer.oxygenLeft = playerController.currentPlayer.oxygenMax;
 
