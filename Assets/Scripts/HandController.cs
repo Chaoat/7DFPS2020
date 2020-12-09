@@ -34,7 +34,7 @@ public class HandController : MonoBehaviour
 	}
 
 	void InitJoints() {
-		float armLength = 1f;
+		float armLength = 1.2f;
 		float handSize = 0.05f;
 		
 		leftHand.armLength = armLength;
@@ -116,15 +116,17 @@ public class HandController : MonoBehaviour
 		int chosenHit = -1;
 		for (int i = 0; i < hits.Length; i++)
 		{
-			if (chosenHit == -1)
-			{
-				chosenHit = i;
-			}
-			else
-			{
-				if (hits[i].distance < hits[chosenHit].distance)
+			if (!hits[i].collider.isTrigger) {
+				if (chosenHit == -1)
 				{
 					chosenHit = i;
+				}
+				else
+				{
+					if (hits[i].distance < hits[chosenHit].distance)
+					{
+						chosenHit = i;
+					}
 				}
 			}
 		}
