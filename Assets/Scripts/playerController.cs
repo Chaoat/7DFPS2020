@@ -78,7 +78,7 @@ public class playerController : MonoBehaviour
 			alphaChange = -1;
 		}
 
-		if (SceneManager.sceneCount == 4 && !won) {
+		if (SceneManager.sceneCount == 6 && !won) {
 			winGame();
 		}
 	}
