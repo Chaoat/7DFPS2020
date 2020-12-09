@@ -74,7 +74,7 @@ public class playerController : MonoBehaviour
 			breathingSound.Play();
 		}
 
-		if (Input.GetMouseButtonDown(0)) {
+		if (Input.GetMouseButtonDown(0) && !won) {
 			alphaChange = -1;
 		}
 
